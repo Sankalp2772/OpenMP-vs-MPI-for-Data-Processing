@@ -64,10 +64,25 @@ The MPI implementation uses the message-passing model.
 
 *Note: Detailed raw logs and summaries can be found in the [`results/`](results/) directory.*
 
-### Performance Metrics Definitions
-- **Speedup ($S$)** = $T_{\text{sequential}} / T_{\text{parallel}}$
-- **Efficiency ($E$)** = $(S / \text{number\_of\_workers}) \times 100\%$
 
+### Performance Metrics Definitions
+
+- **Speedup (S)**  
+  Speedup measures how many times faster the parallel implementation is compared to the sequential implementation.
+
+  **S = T_sequential / T_parallel**
+
+- **Parallel Efficiency (E)**  
+  Efficiency measures how effectively the available threads or processes are utilized.
+
+  **E = (S / N_workers) × 100%**
+
+Where:
+
+- `T_sequential` = Average execution time of the sequential implementation
+- `T_parallel` = Average execution time of the parallel implementation
+- `S` = Speedup
+- `N_workers` = Number of OpenMP threads or MPI processes
 ### Key Measurements (100M Dataset)
 
 **Baseline Sequential Execution Time:** 0.107600 s
