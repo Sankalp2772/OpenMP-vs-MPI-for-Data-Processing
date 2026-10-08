@@ -64,25 +64,10 @@ The MPI implementation uses the message-passing model.
 
 *Note: Detailed raw logs and summaries can be found in the [`results/`](results/) directory.*
 
-
 ### Performance Metrics Definitions
+- **Speedup ($S$)** = $T_{\text{sequential}} / T_{\text{parallel}}$
+- **Efficiency ($E$)** = $(S / \text{number\_of\_workers}) \times 100\%$
 
-- **Speedup (S)**  
-  Speedup measures how many times faster the parallel implementation is compared to the sequential implementation.
-
-  **S = T_sequential / T_parallel**
-
-- **Parallel Efficiency (E)**  
-  Efficiency measures how effectively the available threads or processes are utilized.
-
-  **E = (S / N_workers) × 100%**
-
-Where:
-
-- `T_sequential` = Average execution time of the sequential implementation
-- `T_parallel` = Average execution time of the parallel implementation
-- `S` = Speedup
-- `N_workers` = Number of OpenMP threads or MPI processes
 ### Key Measurements (100M Dataset)
 
 **Baseline Sequential Execution Time:** 0.107600 s
@@ -101,13 +86,35 @@ Where:
 
 *\*OpenMP 1-thread efficiency above 100% occurs due to differing baseline compiler optimizations, memory layouts, and runtime effects between a separately compiled sequential executable and the OpenMP executable.*
 
-### 📈 Graphs
+### 📈 Graphs and Analysis
 
-*(Ensure to check the [`graphs/`](graphs/) directory for full visual analysis)*
+The following graphs visualize the performance of OpenMP and MPI across different dataset sizes and worker configurations.
 
-- **OpenMP Performance:** Execution Time | Speedup | Efficiency
-- **MPI Performance:** Execution Time | Speedup | Efficiency
-- **Comparative (100M):** `openmp_vs_mpi_100m.png` | `openmp_vs_mpi_speedup_100m.png`
+#### 1. OpenMP Performance
+OpenMP shows a clear reduction in execution time as thread count increases, up to a point. However, the speedup flattens, and efficiency drops for higher thread counts due to memory bandwidth saturation and thread overhead.
+
+<p align="center">
+  <img src="graphs/openmp_execution_time.png" width="30%" alt="OpenMP Execution Time" />
+  <img src="graphs/openmp_speedup.png" width="30%" alt="OpenMP Speedup" />
+  <img src="graphs/openmp_efficiency.png" width="30%" alt="OpenMP Efficiency" />
+</p>
+
+#### 2. MPI Performance
+For MPI, the execution time decreases with more processes, but the overall speedup remains below 1 (compared to the sequential baseline). This is because the communication overhead of `MPI_Scatterv` and `MPI_Reduce` heavily dominates the compute time on a single machine.
+
+<p align="center">
+  <img src="graphs/mpi_execution_time.png" width="30%" alt="MPI Execution Time" />
+  <img src="graphs/mpi_speedup.png" width="30%" alt="MPI Speedup" />
+  <img src="graphs/mpi_efficiency.png" width="30%" alt="MPI Efficiency" />
+</p>
+
+#### 3. OpenMP vs MPI (100M Dataset)
+Directly comparing the two paradigms on the 100M dataset highlights OpenMP's superiority for this shared-memory, compute-light workload. OpenMP achieves positive speedups, whereas MPI's execution time is significantly higher due to data distribution and aggregation costs.
+
+<p align="center">
+  <img src="graphs/openmp_vs_mpi_100m.png" width="45%" alt="OpenMP vs MPI Execution Time" />
+  <img src="graphs/openmp_vs_mpi_speedup_100m.png" width="45%" alt="OpenMP vs MPI Speedup" />
+</p>
 
 ## 🔍 Comparative Analysis and Observations
 
@@ -156,7 +163,3 @@ openmp-vs-mpi-data-processing/
 - Test the MPI implementation on a genuine distributed computing cluster (multiple nodes).
 - Implement a more compute-intensive kernel (e.g., matrix multiplication or N-body simulation) to observe how an increased computation-to-communication ratio affects MPI's relative performance.
 - Profile cache misses and memory bandwidth utilization to better explain OpenMP's diminishing returns at higher thread counts.
-
-## Sankalp Praksh Patil
-## 01FE24BCI095
-## 223
